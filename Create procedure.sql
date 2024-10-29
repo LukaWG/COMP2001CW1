@@ -1,4 +1,7 @@
-CREATE PROCEDURE [CW1].[create_trail] @title VARCHAR(100), @rating DECIMAL(2, 1) = NULL, @difficulty VARCHAR(8), @distance DECIMAL(4, 1), @elevation_gain INT, @location VARCHAR(100), @duration INT, @type VARCHAR(10), @description VARCHAR(MAX), @tags VARCHAR(MAX) AS
+CREATE PROCEDURE [CW1].[create_trail] @title VARCHAR(100), @rating DECIMAL(2, 1) = NULL, @difficulty VARCHAR(8), @distance DECIMAL(4, 1), 
+@elevation_gain INT, @location VARCHAR(100), @duration INT, @type VARCHAR(10), @description VARCHAR(MAX), @tags VARCHAR(MAX) 
+AS
+
 INSERT INTO [CW1].[Trail] ([Title], [Rating], [Difficulty], [Distance], [Elevation_gain], [Location], [Duration], [Type], [Description]) VALUES (
     @title, @rating, @difficulty, @distance, @elevation_gain, @location, @duration, @type, @description
 )

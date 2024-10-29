@@ -7,50 +7,31 @@ AS
 BEGIN TRANSACTION [updateTransaction]
     BEGIN TRY
         IF (@title IS NOT NULL)
-            UPDATE [CW1].[Trail]
-            SET [Title]=@title
-            WHERE [CW1].[Trail].[Trail_ID] = @trailID;
+            UPDATE [CW1].[Trail] SET [Title]=@title WHERE [CW1].[Trail].[Trail_ID] = @trailID;
 
         IF (@rating IS NOT NULL)
-            SELECT @rating as rating;
-            UPDATE [CW1].[Trail]
-            SET [Rating]=rating
-            WHERE [CW1].[Trail].[Trail_ID] = @trailID;
+            UPDATE [CW1].[Trail] SET [Rating]=rating WHERE [CW1].[Trail].[Trail_ID] = @trailID;
             
         IF (@difficulty IS NOT NULL)
-            UPDATE [CW1].[Trail]
-            SET [Difficulty]=@difficulty
-            WHERE [CW1].[Trail].[Trail_ID] = @trailID;
+            UPDATE [CW1].[Trail] SET [Difficulty]=@difficulty WHERE [CW1].[Trail].[Trail_ID] = @trailID;
             
         IF (@distance IS NOT NULL)
-            UPDATE [CW1].[Trail]
-            SET [Distance]=@distance
-            WHERE [CW1].[Trail].[Trail_ID] = @trailID;
+            UPDATE [CW1].[Trail] SET [Distance]=@distance WHERE [CW1].[Trail].[Trail_ID] = @trailID;
             
         IF (@elevation_gain IS NOT NULL)
-            UPDATE [CW1].[Trail]
-            SET [Elevation_gain]=@elevation_gain
-            WHERE [CW1].[Trail].[Trail_ID] = @trailID;
+            UPDATE [CW1].[Trail] SET [Elevation_gain]=@elevation_gain WHERE [CW1].[Trail].[Trail_ID] = @trailID;
             
         IF (@location IS NOT NULL)
-            UPDATE [CW1].[Trail]
-            SET [Location]=@location
-            WHERE [CW1].[Trail].[Trail_ID] = @trailID;
+            UPDATE [CW1].[Trail] SET [Location]=@location WHERE [CW1].[Trail].[Trail_ID] = @trailID;
             
         IF (@duration IS NOT NULL)
-            UPDATE [CW1].[Trail]
-            SET [Duration]=@duration
-            WHERE [CW1].[Trail].[Trail_ID] = @trailID;
+            UPDATE [CW1].[Trail] SET [Duration]=@duration WHERE [CW1].[Trail].[Trail_ID] = @trailID;
             
         IF (@type IS NOT NULL)
-            UPDATE [CW1].[Trail]
-            SET [Type]=@type
-            WHERE [CW1].[Trail].[Trail_ID] = @trailID;
+            UPDATE [CW1].[Trail] SET [Type]=@type WHERE [CW1].[Trail].[Trail_ID] = @trailID;
             
         IF (@description IS NOT NULL)
-            UPDATE [CW1].[Trail]
-            SET [Description]=@description
-            WHERE [CW1].[Trail].[Trail_ID] = @trailID;
+            UPDATE [CW1].[Trail] SET [Description]=@description WHERE [CW1].[Trail].[Trail_ID] = @trailID;
         
         COMMIT TRANSACTION [updateTransaction]
 
