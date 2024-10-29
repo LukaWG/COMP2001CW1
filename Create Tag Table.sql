@@ -1,0 +1,4 @@
+CREATE TABLE [CW1].[Tag] (
+    [Tag_ID] INT PRIMARY KEY IDENTITY(1, 1),
+    [Tag_name] VARCHAR(20) NOT NULL,
+)
