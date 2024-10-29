@@ -7,6 +7,6 @@ CREATE TABLE [CW1].[Trail] (
     [Elevation_gain] INT NOT NULL,
     [Location] VARCHAR(100) NOT NULL,
     [Duration] INTEGER NOT NULL,
-    [Type] VARCHAR (10) NOT NULL,
+    [Type] VARCHAR(10) NOT NULL,
     [Description] VARCHAR(MAX) NOT NULL,
 )
