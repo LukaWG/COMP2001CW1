@@ -1,5 +1,5 @@
 CREATE PROCEDURE [CW1].[create_trail] @title VARCHAR(100), @rating DECIMAL(2, 1) = NULL, @difficulty VARCHAR(8), @distance DECIMAL(4, 1), 
-@elevation_gain INT, @location VARCHAR(100), @duration INT, @type VARCHAR(10), @description VARCHAR(MAX), @tags VARCHAR(MAX) 
+@elevation_gain INT, @location VARCHAR(100), @duration INT, @type VARCHAR(10), @description VARCHAR(MAX), @tags VARCHAR(MAX), @ownerID INT
 AS
 
 INSERT INTO [CW1].[Trail] ([Title], [Rating], [Difficulty], [Distance], [Elevation_gain], [Location], [Duration], [Type], [Description]) VALUES (
@@ -51,3 +51,6 @@ SET @trailID =(SELECT [CW1].[Trail].[Trail_ID] FROM [CW1].[Trail] WHERE [Title]=
 
 -- Add tag ID and new trail ID to Trail_tag table
 INSERT INTO [CW1].[Trail_tag] (Tag_ID, Trail_ID) VALUES (@tagID, @trailID);
+
+INSERT INTO [CW1].[Saved] ([Trail_ID], [User_ID], [Owner]) VALUES
+(@trailID, @ownerID, 1);
