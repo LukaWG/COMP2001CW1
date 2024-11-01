@@ -2,55 +2,67 @@ CREATE PROCEDURE [CW1].[create_trail] @title VARCHAR(100), @rating DECIMAL(2, 1)
 @elevation_gain INT, @location VARCHAR(100), @duration INT, @type VARCHAR(10), @description VARCHAR(MAX), @tags VARCHAR(MAX), @ownerID INT
 AS
 
-INSERT INTO [CW1].[Trail] ([Title], [Rating], [Difficulty], [Distance], [Elevation_gain], [Location], [Duration], [Type], [Description]) VALUES (
-    @title, @rating, @difficulty, @distance, @elevation_gain, @location, @duration, @type, @description
-)
+BEGIN TRANSACTION [create];
+        BEGIN TRY;
 
-declare @index INT=1;
-declare @tag VARCHAR(20);
-declare @runagain tinyint=1;
-declare @tagID INT;
-declare @trailID INT;
+        INSERT INTO [CW1].[Trail] ([Title], [Rating], [Difficulty], [Distance], [Elevation_gain], [Location], [Duration], [Type], [Description]) VALUES (
+            @ownerID, @rating, @difficulty, @distance, @elevation_gain, @location, @duration, @type, @description
+        )
 
-while CHARINDEX(',', @tags) != 0 BEGIN
+        UPDATE [CW1].[Trail] SET [Title] = @title WHERE
+        [Rating] = @rating AND [Difficulty] = @difficulty AND [Distance] = @distance AND [Elevation_gain] = @elevation_gain AND [Location] = @location AND [Duration] = @duration AND [Type] = @type;
 
-SET @tag = TRIM(', ' FROM SUBSTRING(@tags, @index, CHARINDEX(',', @tags)-1)); -- Get first tag and remove and trailing whitespace and any commas
-SET @tag = UPPER(SUBSTRING(@tag, 0, 2)) + LOWER(SUBSTRING(@tag, 2, len(@tag))); -- Capitalise first letter and leave rest lowercase
-SET @tags = SUBSTRING(@tags, CHARINDEX(',', @tags)+1, LEN(@tags));
+        declare @index INT=1;
+        declare @tag VARCHAR(20);
+        declare @runagain tinyint=1;
+        declare @tagID INT;
+        declare @trailID INT;
 
--- Check if tag exists
-IF NOT EXISTS (SELECT [CW1].[Tag].[Tag_name] FROM [CW1].[Tag] WHERE [CW1].[Tag].[Tag_name] = @tag)
-    -- Create new tag
-    INSERT INTO [CW1].[Tag] (Tag_name) VALUES (@tag);
+        while CHARINDEX(',', @tags) != 0 BEGIN
 
--- Find tag ID
-SET @tagID =(SELECT [CW1].[Tag].[Tag_ID] FROM [CW1].[Tag] WHERE [CW1].[Tag].[Tag_name] = @tag);
+        SET @tag = TRIM(', ' FROM SUBSTRING(@tags, @index, CHARINDEX(',', @tags)-1)); -- Get first tag and remove and trailing whitespace and any commas
+        SET @tag = UPPER(SUBSTRING(@tag, 0, 2)) + LOWER(SUBSTRING(@tag, 2, len(@tag))); -- Capitalise first letter and leave rest lowercase
+        SET @tags = SUBSTRING(@tags, CHARINDEX(',', @tags)+1, LEN(@tags));
 
--- Find trail ID
-SET @trailID =(SELECT [CW1].[Trail].[Trail_ID] FROM [CW1].[Trail] WHERE [Title]=@title AND [Distance]=@distance AND [Elevation_gain]=@elevation_gain);
+        -- Check if tag exists
+        IF NOT EXISTS (SELECT [CW1].[Tag].[Tag_name] FROM [CW1].[Tag] WHERE [CW1].[Tag].[Tag_name] = @tag)
+            -- Create new tag
+            INSERT INTO [CW1].[Tag] (Tag_name) VALUES (@tag);
 
--- Add tag ID and new trail ID to Trail_tag table
-INSERT INTO [CW1].[Trail_tag] (Tag_ID, Trail_ID) VALUES (@tagID, @trailID);
+        -- Find tag ID
+        SET @tagID =(SELECT [CW1].[Tag].[Tag_ID] FROM [CW1].[Tag] WHERE [CW1].[Tag].[Tag_name] = @tag);
 
-END;
+        -- Find trail ID
+        SET @trailID =(SELECT [CW1].[Trail].[Trail_ID] FROM [CW1].[Trail] WHERE [Title]=@title AND [Distance]=@distance AND [Elevation_gain]=@elevation_gain);
 
--- Repeat while loop once more, however there are no more commas left. The last item is one tag
+        -- Add tag ID and new trail ID to Trail_tag table
+        INSERT INTO [CW1].[Trail_tag] (Tag_ID, Trail_ID) VALUES (@tagID, @trailID);
 
-SET @tag = TRIM(', ' FROM @tags); -- Get first tag and remove and trailing whitespace and any commas
-SET @tag = UPPER(SUBSTRING(@tag, 0, 2)) + LOWER(SUBSTRING(@tag, 2, len(@tag))); -- Capitalise first letter and leave rest lowercase
--- Check if tag exists
-IF NOT EXISTS (SELECT [CW1].[Tag].[Tag_name] FROM [CW1].[Tag] WHERE [CW1].[Tag].[Tag_name] = @tag)
-    -- Create new tag
-    INSERT INTO [CW1].[Tag] (Tag_name) VALUES (@tag);
+        END;
 
--- Find tag ID
-SET @tagID =(SELECT [CW1].[Tag].[Tag_ID] FROM [CW1].[Tag] WHERE [CW1].[Tag].[Tag_name] = @tag);
+        -- Repeat while loop once more, however there are no more commas left. The last item is one tag
 
--- Find trail ID
-SET @trailID =(SELECT [CW1].[Trail].[Trail_ID] FROM [CW1].[Trail] WHERE [Title]=@title AND [Distance]=@distance AND [Elevation_gain]=@elevation_gain);
+        SET @tag = TRIM(', ' FROM @tags); -- Get first tag and remove and trailing whitespace and any commas
+        SET @tag = UPPER(SUBSTRING(@tag, 0, 2)) + LOWER(SUBSTRING(@tag, 2, len(@tag))); -- Capitalise first letter and leave rest lowercase
+        -- Check if tag exists
+        IF NOT EXISTS (SELECT [CW1].[Tag].[Tag_name] FROM [CW1].[Tag] WHERE [CW1].[Tag].[Tag_name] = @tag)
+            -- Create new tag
+            INSERT INTO [CW1].[Tag] (Tag_name) VALUES (@tag);
 
--- Add tag ID and new trail ID to Trail_tag table
-INSERT INTO [CW1].[Trail_tag] (Tag_ID, Trail_ID) VALUES (@tagID, @trailID);
+        -- Find tag ID
+        SET @tagID =(SELECT [CW1].[Tag].[Tag_ID] FROM [CW1].[Tag] WHERE [CW1].[Tag].[Tag_name] = @tag);
 
-INSERT INTO [CW1].[Saved] ([Trail_ID], [User_ID], [Owner]) VALUES
-(@trailID, @ownerID, 1);
+        -- Find trail ID
+        SET @trailID =(SELECT [CW1].[Trail].[Trail_ID] FROM [CW1].[Trail] WHERE [Title]=@title AND [Distance]=@distance AND [Elevation_gain]=@elevation_gain);
+
+        -- Add tag ID and new trail ID to Trail_tag table
+        INSERT INTO [CW1].[Trail_tag] (Tag_ID, Trail_ID) VALUES (@tagID, @trailID);
+
+        INSERT INTO [CW1].[Saved] ([Trail_ID], [User_ID], [Owner]) VALUES
+        (@trailID, @ownerID, 1);
+
+        COMMIT TRANSACTION [create]
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION [create]
+    END CATCH;

@@ -6,7 +6,7 @@ BEGIN
     declare @date DATETIME;
 
     SET @trailID = (SELECT [Trail_ID] FROM inserted);
-    SET @ownerID = (SELECT [User_ID] FROM [CW1].[Saved]);
+    SET @ownerID = (SELECT [Title] FROM inserted); -- User ID temporarily stored in Title until end of trigger
     SET @date = (SELECT CURRENT_TIMESTAMP);
 
     INSERT INTO [CW1].[Log] ([User_ID], [Time_added], [Trail_ID]) VALUES
